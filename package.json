@@ -25,7 +25,10 @@
   "module": "dist/main.js",
   "types": "dist/types/main.d.ts",
   "scripts": {
-    "build": "rollup --config"
+    "lint": "eslint .",
+    "bundle": "rollup --config",
+    "build": "npm run lint && npm run bundle",
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.5.0",
