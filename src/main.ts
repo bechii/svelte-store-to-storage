@@ -5,7 +5,12 @@ export interface IStore<T> {
 
 type StorageType = 'local' | 'session';
 
-function syncToStorage<T>(store: IStore<T>, key: string, type: StorageType, handleStorageValue?: (value: T) => void): void {
+function syncToStorage<T>(
+  store: IStore<T>,
+  key: string,
+  type: StorageType,
+  handleStorageValue?: (value: T) => void
+): void {
   const storage = type === 'local' ? localStorage : sessionStorage;
   const storageValue = storage.getItem(key);
   if (storageValue != null) {
@@ -21,10 +26,18 @@ function syncToStorage<T>(store: IStore<T>, key: string, type: StorageType, hand
   });
 }
 
-export function syncToLocalStorage<T>(store: IStore<T>, key: string, handleStorageValue?: (value: T) => void): void {
+export function syncToLocalStorage<T>(
+  store: IStore<T>,
+  key: string,
+  handleStorageValue?: (value: T) => void
+): void {
   syncToStorage(store, key, 'local', handleStorageValue);
 }
 
-export function syncToSessionStorage<T>(store: IStore<T>, key: string, handleStorageValue?: (value: T) => void): void {
+export function syncToSessionStorage<T>(
+  store: IStore<T>,
+  key: string,
+  handleStorageValue?: (value: T) => void
+): void {
   syncToStorage(store, key, 'session', handleStorageValue);
 }
