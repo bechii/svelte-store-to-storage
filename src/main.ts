@@ -1,43 +1,45 @@
 export interface IStore<T> {
-  subscribe(callback: (value: T) => void): () => void;
+  subscribe(listener: (value: T) => void): () => void;
   set(value: T): void;
 }
 
 type StorageType = 'local' | 'session';
 
+interface EncodingOptions<T> {
+  encode?: (value: T) => string | undefined;
+  decode?: (value: string) => T;
+}
+
 function syncToStorage<T>(
   store: IStore<T>,
   key: string,
   type: StorageType,
-  handleStorageValue?: (value: T) => void
-): void {
+  encodingOptions?: EncodingOptions<T>
+): () => void {
   const storage = type === 'local' ? localStorage : sessionStorage;
   const storageValue = storage.getItem(key);
   if (storageValue != null) {
-    const parsedValue = JSON.parse(storageValue);
-    if (handleStorageValue) {
-      handleStorageValue(parsedValue);
-    } else {
-      store.set(parsedValue);
-    }
+    const decodedValue = encodingOptions?.decode?.(storageValue) ?? (JSON.parse(storageValue) as T);
+    store.set(decodedValue);
   }
-  store.subscribe((value: T) => {
-    storage.setItem(key, JSON.stringify(value));
+  return store.subscribe((value: T) => {
+    const encodedValue = encodingOptions?.encode?.(value) ?? JSON.stringify(value);
+    storage.setItem(key, encodedValue);
   });
 }
 
 export function syncToLocalStorage<T>(
   store: IStore<T>,
   key: string,
-  handleStorageValue?: (value: T) => void
-): void {
-  syncToStorage(store, key, 'local', handleStorageValue);
+  encodingOptions?: EncodingOptions<T>
+): () => void {
+  return syncToStorage(store, key, 'local', encodingOptions);
 }
 
 export function syncToSessionStorage<T>(
   store: IStore<T>,
   key: string,
-  handleStorageValue?: (value: T) => void
-): void {
-  syncToStorage(store, key, 'session', handleStorageValue);
+  encodingOptions?: EncodingOptions<T>
+): () => void {
+  return syncToStorage(store, key, 'session', encodingOptions);
 }

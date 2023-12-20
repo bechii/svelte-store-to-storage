@@ -1,11 +1,14 @@
 {
   "name": "svelte-store2storage",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A functional approach to sync stores to local or session storage",
   "keywords": [
     "svelte",
+    "sveltekit",
     "store",
-    "storage"
+    "storage",
+    "local storage",
+    "session storage"
   ],
   "author": "Simon Bechmann",
   "license": "MIT",
